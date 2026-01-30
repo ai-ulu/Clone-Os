@@ -1,27 +1,25 @@
 import React from 'react';
-import { AgentTerminal } from './components';
+import { DashboardShell, ErrorBoundary } from './components';
 import { CloneProfile } from './types';
 
 const mockProfile: CloneProfile = {
   id: '1',
-  name: 'Enterprise Agent',
-  role: 'Architect',
+  name: 'Alpha One',
+  role: 'System Architect',
   specialization: 'architect',
-  personality: 'Professional and efficient',
-  background: 'Enterprise system design',
-  speakingStyle: 'Formal',
-  hobbies: ['Optimization', 'System Design']
+  personality: 'Strategic, analytical, and highly efficient.',
+  background: 'Core developer of the Neural OS Mesh Network.',
+  speakingStyle: 'Professional and concise.',
+  hobbies: ['Quantum Computing', 'High-Frequency Trading', 'Distributed Systems']
 };
 
 function App() {
   return (
-    <div className="h-screen w-full bg-black">
-      <AgentTerminal
-        profile={mockProfile}
-        onPushCode={() => {}}
-        onNotify={() => {}}
-      />
-    </div>
+    <ErrorBoundary>
+      <div className="h-screen w-full bg-black">
+        <DashboardShell profile={mockProfile} />
+      </div>
+    </ErrorBoundary>
   );
 }
 

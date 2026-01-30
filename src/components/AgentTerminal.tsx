@@ -174,8 +174,8 @@ const AgentTerminal: React.FC<AgentTerminalProps> = ({ profile, onPushCode, onNo
   };
 
   return (
-    <div className="flex h-full bg-[#050508] text-slate-400 font-mono text-[11px] overflow-hidden">
-      <div className="w-80 border-r border-white/5 bg-black/60 flex flex-col shrink-0">
+    <div className="flex h-full bg-transparent text-slate-400 font-mono text-[11px] overflow-hidden">
+      <div className="w-72 border-r border-white/5 bg-white/[0.02] flex flex-col shrink-0">
         <div className="p-5 border-b border-white/5 bg-zinc-950/80 flex items-center justify-between">
            <div className="flex items-center gap-3">
               <Network className="w-4 h-4 text-cyan-500 animate-pulse" />
@@ -219,12 +219,12 @@ const AgentTerminal: React.FC<AgentTerminalProps> = ({ profile, onPushCode, onNo
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-12 custom-scrollbar bg-grid-white/[0.01] flex flex-col gap-12">
+      <div className="flex-1 overflow-y-auto p-8 custom-scrollbar flex flex-col gap-10">
         {activeTask ? (
-          <div className="max-w-5xl mx-auto w-full space-y-10">
+          <div className="max-w-4xl mx-auto w-full space-y-8">
             {/* Blackboard Visualization */}
-            <div className="bg-zinc-950/60 border border-white/5 p-10 rounded-[56px] shadow-2xl relative overflow-hidden group">
-               <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity"><Brain className="w-32 h-32" /></div>
+            <div className="bg-white/[0.03] border border-white/10 p-8 rounded-[32px] shadow-2xl relative overflow-hidden group">
+               <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity"><Brain className="w-24 h-24" /></div>
                <div className="flex items-center gap-4 mb-8">
                   <Database className="w-5 h-5 text-cyan-500" />
                   <h4 className="text-xs font-black text-white uppercase tracking-[0.4em]">Sürü Ortak Zekası</h4>
@@ -239,11 +239,11 @@ const AgentTerminal: React.FC<AgentTerminalProps> = ({ profile, onPushCode, onNo
                </div>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-6">
               {activeTask.subtasks.map((st, i) => {
                 const agent = activeTask.agents.find(a => a.id === st.assignedAgentId);
                 return (
-                  <div key={st.id} className={`p-10 rounded-[48px] border transition-all duration-700 ${
+                  <div key={st.id} className={`p-8 rounded-[32px] border transition-all duration-700 ${
                     st.status === 'completed' ? 'bg-emerald-500/5 border-emerald-500/20' :
                     st.status === 'running' ? 'bg-cyan-500/10 border-cyan-500/40 shadow-2xl' : 'bg-white/5 border-white/5 opacity-50'
                   }`}>

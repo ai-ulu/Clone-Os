@@ -23,3 +23,4 @@ export { default as SwarmNexus } from './SwarmNexus';
 export { default as SystemCore } from './SystemCore';
 export { default as Window } from './Window';
 export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as DashboardShell } from './DashboardShell';

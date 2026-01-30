@@ -96,8 +96,8 @@ const ChatApp: React.FC<ChatAppProps> = ({ profile }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-900">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+    <div className="flex flex-col h-full bg-transparent">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
         {messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-4">
             <Bot className="w-16 h-16 opacity-20" />
@@ -110,8 +110,8 @@ const ChatApp: React.FC<ChatAppProps> = ({ profile }) => {
           <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[80%] rounded-2xl p-4 flex gap-3 ${
               msg.role === 'user' 
-                ? 'bg-blue-600 text-white rounded-tr-none' 
-                : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700'
+                ? 'bg-cyan-600 text-white rounded-tr-none'
+                : 'bg-white/[0.03] text-slate-200 rounded-tl-none border border-white/10'
             }`}>
               <div className="mt-1">
                 {msg.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4 text-blue-400" />}

@@ -142,9 +142,9 @@ const SocialHub: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
   };
 
   return (
-    <div className="flex h-full bg-[#050508] text-slate-400 overflow-hidden font-sans">
+    <div className="flex h-full bg-transparent text-slate-400 overflow-hidden font-sans">
       {/* Sidebar - Accounts & Navigation */}
-      <div className="w-80 border-r border-white/5 bg-zinc-950/40 p-8 flex flex-col gap-10 shrink-0">
+      <div className="w-72 border-r border-white/5 bg-white/[0.01] p-6 flex flex-col gap-8 shrink-0">
         <div className="space-y-8">
            <div className="flex items-center justify-between">
               <h3 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Neural Kanallar</h3>
@@ -201,7 +201,7 @@ const SocialHub: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto p-12 custom-scrollbar bg-black/20">
+      <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
         {view === 'accounts' && (
           <div className="max-w-4xl mx-auto space-y-12 animate-in fade-in duration-500">
              <header className="space-y-4">

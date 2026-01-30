@@ -248,7 +248,7 @@ const CodeWorkspace: React.FC<CodeWorkspaceProps> = ({ files, setFiles, patterns
   if (!files[activeFile]) return <div className="p-20 text-center opacity-20 uppercase font-black tracking-widest">No active file</div>;
 
   return (
-    <div className="flex h-full bg-[#0d0d0f] text-slate-400 font-mono text-[12px] overflow-hidden" style={{ background: syntaxTheme.background }}>
+    <div className="flex h-full bg-transparent text-slate-400 font-mono text-[12px] overflow-hidden">
       {/* Sidebar Toolbelt */}
       <div className="w-14 border-r border-white/5 bg-black/60 flex flex-col items-center py-6 gap-8 shrink-0">
         <FolderOpen className="w-6 h-6 text-cyan-400" />
@@ -264,7 +264,7 @@ const CodeWorkspace: React.FC<CodeWorkspaceProps> = ({ files, setFiles, patterns
       </div>
 
       {/* File Explorer */}
-      <div className="w-64 border-r border-white/5 bg-black/20 flex flex-col shrink-0">
+      <div className="w-56 border-r border-white/5 bg-white/[0.01] flex flex-col shrink-0">
         <div className="p-4 border-b border-white/5 flex items-center justify-between bg-zinc-950/20">
           <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">Çalışma Alanı</span>
           <Plus onClick={() => addFile()} className="w-4 h-4 cursor-pointer hover:text-white transition-colors" />
@@ -332,7 +332,7 @@ const CodeWorkspace: React.FC<CodeWorkspaceProps> = ({ files, setFiles, patterns
           </div>
 
           {/* AI Side Panel */}
-          <div className="w-[500px] border-l border-white/5 bg-black/40 backdrop-blur-md flex flex-col overflow-hidden shadow-2xl">
+          <div className="w-[400px] border-l border-white/5 bg-white/[0.02] backdrop-blur-md flex flex-col overflow-hidden shadow-2xl">
             {/* Tabs */}
             <div className="flex border-b border-white/5 bg-zinc-950/40 shrink-0">
               <button onClick={() => setActiveTab('intellisense')} className={`flex-1 p-4 text-[9px] font-black uppercase tracking-widest transition-all ${activeTab === 'intellisense' ? 'text-cyan-400 bg-cyan-500/5 border-b-2 border-cyan-500' : 'text-slate-600 hover:text-slate-400'}`}>IntelliSense</button>
