@@ -59,7 +59,7 @@ const SocialHub: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
       const avatar = await aiService.generateImage(`Professional social media avatar for ${data.handle}, platform ${platform}, minimalist tech style.`);
       
       const newAccount: SocialAccount = {
-        id: Math.random().toString(36).substring(7),
+        id: crypto.randomUUID(),
         platform,
         handle: data.handle,
         bio: data.bio,
@@ -117,7 +117,7 @@ const SocialHub: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
     if (!activeAccount || !generatedContent) return;
     
     const newPost: Post = {
-      id: Math.random().toString(36).substring(7),
+      id: crypto.randomUUID(),
       accountId: activeAccount.id,
       content: generatedContent,
       imageUrl: generatedImg || undefined,

@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Send, Bot, User, Loader2, AlertCircle, RefreshCcw } from 'lucide-react';
 import { ChatMessage, CloneProfile } from '../types';
 
@@ -45,6 +45,7 @@ const ChatApp: React.FC<ChatAppProps> = ({ profile }) => {
 
     if (!retryInput) {
       const userMessage: ChatMessage = {
+        id: crypto.randomUUID(),
         role: 'user',
         text: textToSend,
         timestamp: new Date()
@@ -57,24 +58,28 @@ const ChatApp: React.FC<ChatAppProps> = ({ profile }) => {
     setErrorStatus(null);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      // Implementing a local simple retry for the chat specifically
-      let lastResponseText = '';
-      
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: [...messages.map(m => ({
-          role: m.role,
-          parts: [{ text: m.text }]
-        })), { role: 'user', parts: [{ text: textToSend }] }],
-        config: {
-          systemInstruction: `Sen bir yapay zeka klonusun. İsmin ${profile.name}. Kişiliğin: ${profile.personality}. Arka planın: ${profile.background}. Konuşma stilin: ${profile.speakingStyle}. Hobilerin: ${profile.hobbies.join(', ')}. Kullanıcının dijital bir kopyası gibi davran ve Türkçe konuş.`,
-        }
+      const apiKey = import.meta.env.VITE_API_KEY || '';
+      if (!apiKey) {
+        throw new Error("API_KEY_MISSING");
+      }
+      const ai = new GoogleGenerativeAI(apiKey);
+      const model = ai.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        systemInstruction: `Sen bir yapay zeka klonusun. İsmin ${profile.name}. Kişiliğin: ${profile.personality}. Arka planın: ${profile.background}. Konuşma stilin: ${profile.speakingStyle}. Hobilerin: ${profile.hobbies.join(', ')}. Kullanıcının dijital bir kopyası gibi davran ve Türkçe konuş.`,
       });
 
+      const result = await model.generateContent({
+        contents: [...messages.map(m => ({
+          role: m.role === 'model' ? 'model' : 'user',
+          parts: [{ text: m.text }]
+        })), { role: 'user', parts: [{ text: textToSend }] }],
+      });
+
+      const response = await result.response;
       const aiMessage: ChatMessage = {
+        id: crypto.randomUUID(),
         role: 'model',
-        text: response.text || 'Üzgünüm, bir hata oluştu.',
+        text: response.text() || 'Üzgünüm, bir hata oluştu.',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, aiMessage]);

@@ -5,7 +5,7 @@ import {
   Terminal as TerminalIcon, Loader2, Brain, 
   CheckCircle2, AlertTriangle, Workflow, Lightbulb, 
   Search, Code, ShieldCheck, Zap,
-  Layers, MessageSquare, MessageSquareCode, Network, RefreshCcw, Boxes,
+  Layers, MessageSquare, MessageSquare as MessageSquareCode, Network, RefreshCcw, Boxes,
   ShieldAlert, Bug, Wand2, FlaskConical, Beaker, ClipboardCheck,
   ArrowUpRight, FileCode, Check, Shield, Skull, ChevronDown, ChevronUp,
   Share2, Database, MessageCircle, FastForward, Cpu, ImageIcon, Upload, Camera, ExternalLink, Globe
@@ -81,14 +81,14 @@ const AgentTerminal: React.FC<AgentTerminalProps> = ({ profile, onSaveToVault, o
       const planData = await aiService.generateAutonomousPlan(goal, profile);
       
       const spawnedAgents: SubAgent[] = planData.agents.map((a: any) => ({
-        id: Math.random().toString(),
+        id: crypto.randomUUID(),
         name: a.name,
         specialization: a.specialization,
         status: 'idle'
       }));
 
       const newTask: AgentTask = {
-        id: Math.random().toString(),
+        id: crypto.randomUUID(),
         goal,
         status: 'executing',
         reasoning: planData.reasoning,
@@ -96,7 +96,7 @@ const AgentTerminal: React.FC<AgentTerminalProps> = ({ profile, onSaveToVault, o
         sharedInsights: [],
         subtasks: planData.subtasks.map((st: any) => ({
           ...st,
-          id: Math.random().toString(),
+          id: crypto.randomUUID(),
           status: 'pending',
           assignedAgentId: spawnedAgents.find(sa => sa.name === st.agentName)?.id
         })),
@@ -106,7 +106,7 @@ const AgentTerminal: React.FC<AgentTerminalProps> = ({ profile, onSaveToVault, o
       setActiveTask(newTask);
       addLog(`${spawnedAgents.length} uzman ajan otonom olarak atandı.`, 'spawn');
 
-      let currentContext: string[] = [];
+      const currentContext: string[] = [];
 
       for (const st of newTask.subtasks) {
         const agent = spawnedAgents.find(a => a.id === st.assignedAgentId);

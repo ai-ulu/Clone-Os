@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { GoogleGenAI, Modality, LiveServerMessage } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Mic, MicOff, Volume2, Info, AlertCircle, MessageSquare, Trash2, History, Camera, Eye, EyeOff, Loader2, Command, Zap, Activity, Waves, Bot, Quote, Gauge, TrendingUp, Sparkles, UserCheck } from 'lucide-react';
 import { decode, decodeAudioData, createBlob } from '../services/audioUtils';
 import { aiService, controlOSFunctionDeclaration } from '../services/ai';
@@ -111,7 +111,8 @@ const LiveVoiceApp: React.FC<LiveVoiceAppProps> = ({ profile, onOSAction }) => {
   const startSession = async () => {
     try {
       setIsConnecting(true);
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = import.meta.env.VITE_API_KEY || '';
+      const ai = new GoogleGenerativeAI(apiKey);
       const inputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
       const outputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       audioContextRef.current = inputCtx; outputAudioContextRef.current = outputCtx;
@@ -132,7 +133,7 @@ const LiveVoiceApp: React.FC<LiveVoiceAppProps> = ({ profile, onOSAction }) => {
             source.connect(scriptProcessor); scriptProcessor.connect(inputCtx.destination);
             if (isVisionEnabled) initiateVisionStreaming();
           },
-          onmessage: async (message: LiveServerMessage) => {
+          onmessage: async (message: any) => {
             if (message.toolCall) {
               for (const fc of message.toolCall.functionCalls) {
                 if (fc.name === 'controlOS') {
@@ -162,7 +163,7 @@ const LiveVoiceApp: React.FC<LiveVoiceAppProps> = ({ profile, onOSAction }) => {
           onclose: () => { stopSession(); }
         },
         config: {
-          responseModalities: [Modality.AUDIO],
+          responseModalities: ["AUDIO"],
           speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } } },
           tools: [{ functionDeclarations: [controlOSFunctionDeclaration] }],
           systemInstruction: `Sen mülakat ve toplantı uzmanı ${profile.name}'sin.`,
