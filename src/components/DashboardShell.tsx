@@ -29,32 +29,22 @@ const DashboardShell: React.FC<DashboardShellProps> = ({ profile }) => {
   ];
 
   const renderContent = () => {
-    const activeItem = navigation.find(n => n.id === activeTab);
-    if (!activeItem) return null;
-
-    const Component = activeItem.component;
-
-    // Most components need specific props, but we'll adapt them
-    if (activeTab === 'terminal') {
-      return <AgentTerminal profile={profile} onPushCode={() => {}} onNotify={() => {}} />;
+    switch (activeTab) {
+      case 'terminal':
+        return <AgentTerminal profile={profile} onPushCode={() => {}} onNotify={() => {}} />;
+      case 'chat':
+        return <ChatApp profile={profile} />;
+      case 'code':
+        return <CodeWorkspace files={[{name: 'main.py', content: '# Enterprise script'}]} setFiles={() => {}} patterns={[]} />;
+      case 'social':
+        return <SocialHub profile={profile} />;
+      case 'vault':
+        return <KnowledgeVault items={[]} onDelete={() => {}} />;
+      case 'ops':
+        return <OpsConsole />;
+      default:
+        return null;
     }
-    if (activeTab === 'chat') {
-      return <ChatApp profile={profile} />;
-    }
-    if (activeTab === 'code') {
-      return <CodeWorkspace files={[{name: 'main.py', content: '# Enterprise script'}]} setFiles={() => {}} patterns={[]} />;
-    }
-    if (activeTab === 'social') {
-      return <SocialHub profile={profile} />;
-    }
-    if (activeTab === 'vault') {
-      return <KnowledgeVault />;
-    }
-    if (activeTab === 'ops') {
-      return <OpsConsole />;
-    }
-
-    return <Component profile={profile} />;
   };
 
   return (
