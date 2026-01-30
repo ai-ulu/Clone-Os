@@ -16,10 +16,27 @@ Bu proje, yüksek performanslı ve kurumsal düzeyde (enterprise-grade) otonom a
 - **Kurumsal Standartlar**: Güvenlik, performans ve ölçeklenebilirlik için optimize edilmiş mimari.
 
 ### Kurulum
-```bash
-npm install
-npm run dev
-```
+
+1.  **Bağımlılıkları Yükleyin:**
+    ```bash
+    npm install
+    ```
+
+2.  **Ortam Değişkenlerini Ayarlayın:**
+    `.env.example` dosyasını `.env` olarak kopyalayın ve gerekli anahtarları girin.
+    ```bash
+    cp .env.example .env
+    ```
+
+3.  **Geliştirme Sunucusunu Başlatın:**
+    ```bash
+    npm run dev
+    ```
+
+4.  **Üretim İçin Derleme:**
+    ```bash
+    npm run build
+    ```
 
 ---
 
@@ -35,7 +52,24 @@ This project is a high-performance, enterprise-grade autonomous agent management
 - **Enterprise Standards**: Architecture optimized for security, performance, and scalability.
 
 ### Installation
-```bash
-npm install
-npm run dev
-```
+
+1.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+
+2.  **Set Up Environment Variables:**
+    Copy the `.env.example` file to `.env` and fill in the required keys.
+    ```bash
+    cp .env.example .env
+    ```
+
+3.  **Start Development Server:**
+    ```bash
+    npm run dev
+    ```
+
+4.  **Build for Production:**
+    ```bash
+    npm run build
+    ```
