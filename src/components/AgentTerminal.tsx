@@ -2,15 +2,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { aiService } from '../services/ai';
 import { 
-  Terminal as TerminalIcon, Loader2, Brain, 
-  CheckCircle2, AlertTriangle, Workflow, Lightbulb, 
+  Loader2, Brain,
+  Workflow,
   Search, Code, ShieldCheck, Zap,
-  Layers, MessageSquare, MessageSquare as MessageSquareCode, Network, RefreshCcw, Boxes,
-  ShieldAlert, Bug, Wand2, FlaskConical, Beaker, ClipboardCheck,
-  ArrowUpRight, FileCode, Check, Shield, Skull, ChevronDown, ChevronUp,
-  Share2, Database, MessageCircle, FastForward, Cpu, ImageIcon, Upload, Camera, ExternalLink, Globe
+  Layers, MessageSquare, Network,
+  Database, Camera
 } from 'lucide-react';
-import { CloneProfile, KnowledgeItem, AgentTask, SubTask, SubAgent, Notification } from '../types';
+import { CloneProfile, KnowledgeItem, AgentTask, SubAgent, Notification } from '../types';
 
 const AGENT_TYPE_ICONS: Record<string, React.ReactNode> = {
   researcher: <Search className="w-3.5 h-3.5" />,
@@ -27,7 +25,7 @@ interface AgentTerminalProps {
   onNotify: (title: string, message: string, type: Notification['type']) => void;
 }
 
-const AgentTerminal: React.FC<AgentTerminalProps> = ({ profile, onSaveToVault, onPushCode, onNotify }) => {
+const AgentTerminal: React.FC<AgentTerminalProps> = ({ profile, onPushCode, onNotify }) => {
   const [goal, setGoal] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Cloud, Server, Activity, Shield, Terminal as TermIcon, 
-  Cpu, HardDrive, Globe, RefreshCw, CheckCircle2, AlertCircle, TrendingUp, Zap, Radio
+  Cpu, HardDrive, Globe, RefreshCw, TrendingUp, Zap, Radio
 } from 'lucide-react';
 import { aiService } from '../services/ai';
 
@@ -33,7 +33,7 @@ const OpsConsole: React.FC = () => {
   // Neural Prediction logic
   const runPrediction = async () => {
     setIsSyncing(true);
-    const result = await aiService.getPredictiveTelemetry(metrics);
+    const result = await (aiService as any).getPredictiveTelemetry();
     setPrediction(result);
     setIsSyncing(false);
   };

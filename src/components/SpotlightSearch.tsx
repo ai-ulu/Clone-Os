@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Command, Sparkles, Zap, FileCode, Database, MessageSquare, Terminal, X, Loader2, ArrowRight, Bot, Globe, ExternalLink } from 'lucide-react';
+import { Search, Command, Sparkles, FileCode, Terminal, Loader2, ArrowRight, Bot, Globe, ExternalLink } from 'lucide-react';
 import { aiService } from '../services/ai';
 
 interface SpotlightSearchProps {

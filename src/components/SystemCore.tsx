@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Cpu, Zap, Brain, Activity, ShieldCheck, Globe, Radio } from 'lucide-react';
+import { Cpu, Brain, ShieldCheck, Globe, Radio } from 'lucide-react';
 
 const SystemCore: React.FC<{ isIdle?: boolean }> = ({ isIdle = true }) => {
   const [pulse, setPulse] = useState(0);

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { THEMES } from '../constants';
 import { AppTheme } from '../types';
-import { Settings, Shield, Zap, Database, Brain, RefreshCw, Sliders, Info, AlertCircle, Sparkles, Layout, CheckCircle2 } from 'lucide-react';
+import { Shield, Database, Brain, RefreshCw, Info, Sparkles, Layout, CheckCircle2 } from 'lucide-react';
 
 interface NeuralSettingsProps {
   activeTheme: AppTheme;

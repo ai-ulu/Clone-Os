@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Database, Box, Clock, ChevronRight, Activity, Cpu } from 'lucide-react';
+import { Database, Box, Activity, Cpu } from 'lucide-react';
 import { LedgerEntry } from '../types';
 
 interface QuantumLedgerProps {

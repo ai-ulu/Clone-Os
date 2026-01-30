@@ -2,13 +2,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { aiService } from '../services/ai';
 import { 
-  FileCode, Play, Save, FolderOpen, ChevronRight, 
-  Terminal as TermIcon, Search, Layout, FileJson, FileText, Settings,
-  Github, Plus, Trash2, GitCommit, GitPullRequest, Sparkles, Loader2,
-  Check, ArrowRight, FileType, FileEdit, Beaker, FlaskConical, ClipboardCheck,
-  Zap, ShieldCheck, Bug, AlertTriangle, ShieldAlert, Info, Hammer,
-  CheckCircle2, XCircle, Timer, Activity, Gauge, RefreshCcw, 
-  ChevronDown, ChevronUp, History, FastForward, Wand2, Orbit, Palette, Pipette
+  FileCode, Play, FolderOpen,
+  Terminal as Layout, FileJson, FileText, Settings,
+  Github, Plus, Trash2, Sparkles, Loader2,
+  ArrowRight, Beaker,
+  Zap, Shield, AlertTriangle, ShieldAlert, Info, Hammer,
+
+  Orbit, Palette, Pipette
 } from 'lucide-react';
 import { SyntaxTheme } from '../types';
 
@@ -189,7 +189,7 @@ const CodeWorkspace: React.FC<CodeWorkspaceProps> = ({ files, setFiles, patterns
     setIsTesting(true);
     setActiveTab('tests');
     const currentFile = files[activeFile];
-    const result = await aiService.generateTests(
+    const result = await (aiService as any).generateTests(
       `Kod Analizi: ${currentFile.name}`,
       currentFile.content,
       { name: 'Senior QA Agent', specialization: 'debugger' }

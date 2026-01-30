@@ -1,5 +1,8 @@
-export const THEMES = {
-  dark: {
+export const THEMES = [
+  {
+    id: 'dark',
+    name: 'Neural Dark',
+    background: '#000000',
     primary: '#000000',
     secondary: '#111111',
     accent: '#00ffff',
@@ -8,7 +11,7 @@ export const THEMES = {
     windowBg: 'bg-slate-900/80',
     glassBlur: 'backdrop-blur-3xl'
   }
-};
+];
 
 export const INITIAL_WINDOWS = [
   { id: 'terminal', title: 'Agent Terminal', iconName: 'Terminal', component: 'AgentTerminal' },

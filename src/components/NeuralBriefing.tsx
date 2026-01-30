@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Terminal, Activity, Brain, ChevronRight, Play, X, Bot, ShieldCheck } from 'lucide-react';
+import { Sparkles, Terminal, Activity, Brain, Play, X, Bot, ShieldCheck } from 'lucide-react';
 import { aiService } from '../services/ai';
 
 interface NeuralBriefingProps {

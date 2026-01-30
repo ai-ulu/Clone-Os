@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { aiService } from '../services/ai';
 import { 
-  Twitter, Instagram, Linkedin, Calendar, TrendingUp, 
-  MessageCircle, BarChart3, Plus, Image as ImageIcon, Wand2, Loader2, Sparkles,
-  Download, Share2, Palette, Zap, UserPlus, Globe, Hash, UserCircle, Settings,
-  PieChart, Send, CheckCircle, Clock, History, Layout, Eye, Trash2
+  Twitter, Instagram, Linkedin, TrendingUp,
+  Plus, Image as Wand2, Loader2, Sparkles,
+  Share2, Zap, UserPlus, Globe, Hash, UserCircle, Settings,
+  PieChart, CheckCircle, Clock, History, Layout, Trash2
 } from 'lucide-react';
 import { CloneProfile, SocialAccount, Post } from '../types';
 

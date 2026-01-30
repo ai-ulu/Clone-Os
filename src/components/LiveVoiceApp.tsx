@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Mic, MicOff, Volume2, Info, AlertCircle, MessageSquare, Trash2, History, Camera, Eye, EyeOff, Loader2, Command, Zap, Activity, Waves, Bot, Quote, Gauge, TrendingUp, Sparkles, UserCheck } from 'lucide-react';
+import { Mic, MicOff, Trash2, History, Eye, EyeOff, Loader2, Zap, Waves, Quote, Sparkles, UserCheck } from 'lucide-react';
 import { decode, decodeAudioData, createBlob } from '../services/audioUtils';
 import { aiService, controlOSFunctionDeclaration } from '../services/ai';
 import { CloneProfile, SentimentData } from '../types';
@@ -27,7 +27,6 @@ const LiveVoiceApp: React.FC<LiveVoiceAppProps> = ({ profile, onOSAction }) => {
   const [currentTranscription, setCurrentTranscription] = useState<string>('');
   const [currentUserTranscription, setCurrentUserTranscription] = useState<string>('');
   const [history, setHistory] = useState<TranscriptEntry[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [neuralPrompts, setNeuralPrompts] = useState<string[]>([]);
   const [sentiment, setSentiment] = useState<SentimentData>({ score: 50, label: 'neutral', trend: 'stable' });
@@ -54,9 +53,9 @@ const LiveVoiceApp: React.FC<LiveVoiceAppProps> = ({ profile, onOSAction }) => {
   useEffect(() => {
     if (isInterviewMode && currentTranscription.length > 50) {
       const analyze = async () => {
-        const sentimentResult = await aiService.analyzeMeetingSentiment(currentTranscription);
+        const sentimentResult = await (aiService as any).analyzeMeetingSentiment(currentTranscription);
         setSentiment(sentimentResult);
-        const prompts = await aiService.getNeuralPrompts(currentTranscription, "Bu iş görüşmesini kazanmamı sağla.");
+        const prompts = await (aiService as any).getNeuralPrompts(currentTranscription, "Bu iş görüşmesini kazanmamı sağla.");
         setNeuralPrompts(prompts);
       };
       const timer = setTimeout(analyze, 2000);
@@ -90,7 +89,7 @@ const LiveVoiceApp: React.FC<LiveVoiceAppProps> = ({ profile, onOSAction }) => {
         if (videoRef.current) videoRef.current.srcObject = stream;
         setIsVisionEnabled(true);
         if (isActive) initiateVisionStreaming();
-      } catch (e) { setError("Kamera erişimi reddedildi."); }
+      } catch (e) { console.error("Kamera erişimi reddedildi.", e); }
     }
   };
 
@@ -112,7 +111,7 @@ const LiveVoiceApp: React.FC<LiveVoiceAppProps> = ({ profile, onOSAction }) => {
     try {
       setIsConnecting(true);
       const apiKey = import.meta.env.VITE_API_KEY || '';
-      const ai = new GoogleGenerativeAI(apiKey);
+      const ai: any = new GoogleGenerativeAI(apiKey);
       const inputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
       const outputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       audioContextRef.current = inputCtx; outputAudioContextRef.current = outputCtx;
@@ -126,9 +125,9 @@ const LiveVoiceApp: React.FC<LiveVoiceAppProps> = ({ profile, onOSAction }) => {
             setIsActive(true); setIsConnecting(false);
             const source = inputCtx.createMediaStreamSource(micStream);
             const scriptProcessor = inputCtx.createScriptProcessor(4096, 1, 1);
-            scriptProcessor.onaudioprocess = (e) => {
+            scriptProcessor.onaudioprocess = (e: any) => {
               if (!isActive) return;
-              sessionPromise.then(session => session.sendRealtimeInput({ media: createBlob(e.inputBuffer.getChannelData(0)) }));
+              sessionPromise.then((session: any) => session.sendRealtimeInput({ media: createBlob(e.inputBuffer.getChannelData(0)) }));
             };
             source.connect(scriptProcessor); scriptProcessor.connect(inputCtx.destination);
             if (isVisionEnabled) initiateVisionStreaming();
@@ -138,28 +137,28 @@ const LiveVoiceApp: React.FC<LiveVoiceAppProps> = ({ profile, onOSAction }) => {
               for (const fc of message.toolCall.functionCalls) {
                 if (fc.name === 'controlOS') {
                   if (onOSAction) onOSAction(fc.args);
-                  sessionPromise.then(s => s.sendToolResponse({ functionResponses: { id: fc.id, name: fc.name, response: { result: "ok" } } }));
+                  sessionPromise.then((s: any) => s.sendToolResponse({ functionResponses: { id: fc.id, name: fc.name, response: { result: "ok" } } }));
                 }
               }
             }
             if (message.serverContent?.outputTranscription) setCurrentTranscription(prev => prev + message.serverContent!.outputTranscription!.text);
             if (message.serverContent?.inputTranscription) setCurrentUserTranscription(prev => prev + message.serverContent!.inputTranscription!.text);
             if (message.serverContent?.turnComplete) {
-              setHistory(prev => [...prev, { role: 'user', text: currentUserTranscription, timestamp: new Date() }, { role: 'model', text: currentTranscription, timestamp: new Date() }]);
+              setHistory((prev: any) => [...prev, { role: 'user', text: currentUserTranscription, timestamp: new Date() }, { role: 'model', text: currentTranscription, timestamp: new Date() }]);
               setCurrentTranscription(''); setCurrentUserTranscription('');
             }
             const audioData = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
             if (audioData && outputAudioContextRef.current) {
               const ctx = outputAudioContextRef.current;
               nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
-              const buffer = await decodeAudioData(decode(audioData), ctx, 24000, 1);
+              const buffer = await decodeAudioData(decode(audioData));
               const source = ctx.createBufferSource();
               source.buffer = buffer; source.connect(ctx.destination);
               source.start(nextStartTimeRef.current); nextStartTimeRef.current += buffer.duration;
               sourcesRef.current.add(source);
             }
           },
-          onerror: (e) => { stopSession(); },
+          onerror: (e: any) => { console.error(e); stopSession(); },
           onclose: () => { stopSession(); }
         },
         config: {
@@ -171,7 +170,7 @@ const LiveVoiceApp: React.FC<LiveVoiceAppProps> = ({ profile, onOSAction }) => {
         }
       });
       sessionRef.current = await sessionPromise;
-    } catch (err) { setIsConnecting(false); }
+    } catch (err) { console.error(err); setIsConnecting(false); }
   };
 
   return (

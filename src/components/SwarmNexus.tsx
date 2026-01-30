@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Share, Zap, Brain, TrendingUp, Search, Code, ShieldCheck, 
+  Zap, Brain, TrendingUp, Search, Code, ShieldCheck,
   MessageCircle, Loader2, Sparkles, RefreshCw, Layers, Radio,
   Command, ChevronRight, Play, CheckCircle2, AlertCircle
 } from 'lucide-react';
