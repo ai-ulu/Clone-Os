@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { aiService } from '../services/ai';
 import { 
-  Twitter, Instagram, Linkedin, Calendar, TrendingUp, 
-  MessageCircle, BarChart3, Plus, Image as ImageIcon, Wand2, Loader2, Sparkles,
-  Download, Share2, Palette, Zap, UserPlus, Globe, Hash, UserCircle, Settings,
-  PieChart, Send, CheckCircle, Clock, History, Layout, Eye, Trash2
+  Twitter, Instagram, Linkedin, TrendingUp,
+  Plus, Image as Wand2, Loader2, Sparkles,
+  Share2, Zap, UserPlus, Globe, Hash, UserCircle, Settings,
+  PieChart, CheckCircle, Clock, History, Layout, Trash2
 } from 'lucide-react';
 import { CloneProfile, SocialAccount, Post } from '../types';
 
@@ -59,7 +59,7 @@ const SocialHub: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
       const avatar = await aiService.generateImage(`Professional social media avatar for ${data.handle}, platform ${platform}, minimalist tech style.`);
       
       const newAccount: SocialAccount = {
-        id: Math.random().toString(36).substring(7),
+        id: crypto.randomUUID(),
         platform,
         handle: data.handle,
         bio: data.bio,
@@ -117,7 +117,7 @@ const SocialHub: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
     if (!activeAccount || !generatedContent) return;
     
     const newPost: Post = {
-      id: Math.random().toString(36).substring(7),
+      id: crypto.randomUUID(),
       accountId: activeAccount.id,
       content: generatedContent,
       imageUrl: generatedImg || undefined,
@@ -142,9 +142,9 @@ const SocialHub: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
   };
 
   return (
-    <div className="flex h-full bg-[#050508] text-slate-400 overflow-hidden font-sans">
+    <div className="flex h-full bg-transparent text-slate-400 overflow-hidden font-sans">
       {/* Sidebar - Accounts & Navigation */}
-      <div className="w-80 border-r border-white/5 bg-zinc-950/40 p-8 flex flex-col gap-10 shrink-0">
+      <div className="w-72 border-r border-white/5 bg-white/[0.01] p-6 flex flex-col gap-8 shrink-0">
         <div className="space-y-8">
            <div className="flex items-center justify-between">
               <h3 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Neural Kanallar</h3>
@@ -201,7 +201,7 @@ const SocialHub: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto p-12 custom-scrollbar bg-black/20">
+      <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
         {view === 'accounts' && (
           <div className="max-w-4xl mx-auto space-y-12 animate-in fade-in duration-500">
              <header className="space-y-4">

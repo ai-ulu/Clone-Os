@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { GoogleGenAI, Modality, LiveServerMessage } from "@google/genai";
-import { Mic, MicOff, Languages, Volume2, VolumeX, Trash2, History, Loader2, Sparkles, Globe, ArrowRightLeft, Quote } from 'lucide-react';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Mic, MicOff, Languages, Volume2, VolumeX, Trash2, History, Loader2, Sparkles, Globe, Quote } from 'lucide-react';
 import { decode, decodeAudioData, createBlob } from '../services/audioUtils';
 import { CloneProfile } from '../types';
 
@@ -45,7 +45,8 @@ const InterpreterApp: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
   const startSession = async () => {
     try {
       setIsConnecting(true);
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = import.meta.env.VITE_API_KEY || '';
+      const ai: any = new GoogleGenerativeAI(apiKey);
       const inputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
       const outputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       audioContextRef.current = inputCtx; outputAudioContextRef.current = outputCtx;
@@ -59,13 +60,13 @@ const InterpreterApp: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
             setIsActive(true); setIsConnecting(false);
             const source = inputCtx.createMediaStreamSource(micStream);
             const scriptProcessor = inputCtx.createScriptProcessor(4096, 1, 1);
-            scriptProcessor.onaudioprocess = (e) => {
+            scriptProcessor.onaudioprocess = (e: any) => {
               if (!isActive) return;
-              sessionPromise.then(session => session.sendRealtimeInput({ media: createBlob(e.inputBuffer.getChannelData(0)) }));
+              sessionPromise.then((session: any) => session.sendRealtimeInput({ media: createBlob(e.inputBuffer.getChannelData(0)) }));
             };
             source.connect(scriptProcessor); scriptProcessor.connect(inputCtx.destination);
           },
-          onmessage: async (message: LiveServerMessage) => {
+          onmessage: async (message: any) => {
             // Canlı çeviri transkripti
             if (message.serverContent?.outputTranscription) {
               setCurrentTranslated(prev => prev + message.serverContent!.outputTranscription!.text);
@@ -87,7 +88,7 @@ const InterpreterApp: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
             if (audioData && isAudioOutputEnabled && outputAudioContextRef.current) {
               const ctx = outputAudioContextRef.current;
               nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
-              const buffer = await decodeAudioData(decode(audioData), ctx, 24000, 1);
+              const buffer = await decodeAudioData(decode(audioData));
               const source = ctx.createBufferSource();
               source.buffer = buffer; source.connect(ctx.destination);
               source.start(nextStartTimeRef.current); nextStartTimeRef.current += buffer.duration;
@@ -97,17 +98,14 @@ const InterpreterApp: React.FC<{ profile: CloneProfile }> = ({ profile }) => {
           onclose: () => stopSession()
         },
         config: {
-          responseModalities: [Modality.AUDIO],
+          responseModalities: ["AUDIO"],
           speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
-          systemInstruction: `Sen profesyonel bir eş zamanlı tercümansın. 
-          GÖREVİN: Duyduğun her şeyi anında ${targetLang} diline çevirmek. 
-          Sadece çeviriyi söyle veya yaz. Kendi yorumunu ekleme. 
-          Toplantı bağlamını koru ve teknik terimleri doğru çevir.`,
+          systemInstruction: `Sen profesyonel bir eş zamanlı tercümansın. GÖREVİN: Duyduğun her şeyi anında ${targetLang} diline çevirmek. Kişiliğin: ${profile.name}`,
           outputAudioTranscription: {}, inputAudioTranscription: {}
         }
       });
       sessionRef.current = await sessionPromise;
-    } catch (err) { setIsConnecting(false); }
+    } catch (err) { console.error(err); setIsConnecting(false); }
   };
 
   return (

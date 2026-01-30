@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Share, Zap, Brain, TrendingUp, Search, Code, ShieldCheck, 
+  Zap, Brain, TrendingUp, Search, Code, ShieldCheck,
   MessageCircle, Loader2, Sparkles, RefreshCw, Layers, Radio,
   Command, ChevronRight, Play, CheckCircle2, AlertCircle
 } from 'lucide-react';
@@ -166,7 +166,7 @@ const SwarmNexus: React.FC<SwarmNexusProps> = ({ activeTask, patterns, onTrigger
                               <Sparkles className="w-5 h-5" />
                               <span className="text-[10px] font-black uppercase tracking-widest">Pattern Detected</span>
                            </div>
-                           <div className="text-[9px] font-black text-slate-600 bg-white/5 px-3 py-1 rounded-full">{Math.round(p.confidence * 100)}% Match</div>
+                           <div className="text-[9px] font-black text-slate-600 bg-white/5 px-3 py-1 rounded-full">{Math.round((p.confidence || 0) * 100)}% Match</div>
                         </div>
                         
                         <div className="space-y-4 flex-1">

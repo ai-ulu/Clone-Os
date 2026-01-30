@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Zap, Activity, Wifi, Brain } from 'lucide-react';
+import { Activity, Wifi, Brain } from 'lucide-react';
 import { aiService } from '../services/ai';
 
 const STATIC_THOUGHTS = [
