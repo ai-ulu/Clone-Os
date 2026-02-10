@@ -1,0 +1,210 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: E2E Tests (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, firefox, webkit, 'Mobile Chrome', 'Mobile Safari']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: Clone-Os/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: Clone-Os
+        run: npm ci
+      
+      - name: Install Playwright Browsers
+        working-directory: Clone-Os
+        run: npx playwright install --with-deps ${{ matrix.project == 'chromium' && 'chromium' || matrix.project == 'firefox' && 'firefox' || matrix.project == 'webkit' && 'webkit' || 'chromium' }}
+      
+      - name: Run E2E tests
+        working-directory: Clone-Os
+        run: npx playwright test --project="${{ matrix.project }}"
+        env:
+          CI: true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.project }}
+          path: Clone-Os/playwright-report/
+          retention-days: 30
+      
+      - name: Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.project }}
+          path: Clone-Os/e2e/screenshots/
+          retention-days: 7
+      
+      - name: Upload videos
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-${{ matrix.project }}
+          path: Clone-Os/test-results/
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse Performance
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: Clone-Os/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: Clone-Os
+        run: npm ci
+      
+      - name: Build app
+        working-directory: Clone-Os
+        run: npm run build
+      
+      - name: Run Lighthouse CI
+        working-directory: Clone-Os
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      
+      - name: Upload Lighthouse results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results
+          path: Clone-Os/.lighthouseci/
+          retention-days: 30
+
+  visual-regression:
+    name: Visual Regression Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: Clone-Os/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: Clone-Os
+        run: npm ci
+      
+      - name: Install Playwright
+        working-directory: Clone-Os
+        run: npx playwright install --with-deps chromium
+      
+      - name: Run visual regression tests
+        working-directory: Clone-Os
+        run: npx playwright test --project=chromium --grep="visual regression"
+        env:
+          CI: true
+      
+      - name: Upload visual diffs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diffs
+          path: Clone-Os/test-results/
+          retention-days: 7
+
+  accessibility:
+    name: Accessibility Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: Clone-Os/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: Clone-Os
+        run: npm ci
+      
+      - name: Install Playwright
+        working-directory: Clone-Os
+        run: npx playwright install --with-deps chromium
+      
+      - name: Run accessibility tests
+        working-directory: Clone-Os
+        run: |
+          npm install -D @axe-core/playwright
+          npx playwright test --grep="accessibility"
+        env:
+          CI: true
+      
+      - name: Upload a11y results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-results
+          path: Clone-Os/test-results/
+          retention-days: 30
+
+  summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [test, lighthouse, visual-regression, accessibility]
+    if: always()
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+      
+      - name: Generate summary
+        run: |
+          echo "# E2E Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Test Status" >> $GITHUB_STEP_SUMMARY
+          echo "- Browser Tests: ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Lighthouse: ${{ needs.lighthouse.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Visual Regression: ${{ needs.visual-regression.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Accessibility: ${{ needs.accessibility.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- Test reports available in artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- Screenshots available if tests failed" >> $GITHUB_STEP_SUMMARY
